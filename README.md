@@ -1,16 +1,42 @@
-# Introduction to GitHub
+import os
+import shutil
 
-<img src="https://octodex.github.com/images/Professortocat_v2.png" align="right" height="200px" />
+# Define file type folders
+FILE_TYPES = {
+    "Images": [".png", ".jpg", ".jpeg", ".gif"],
+    "Documents": [".pdf", ".docx", ".txt", ".xlsx", ".pptx"],
+    "Videos": [".mp4", ".mov", ".avi"],
+    "Audio": [".mp3", ".wav"],
+    "Others": []
+}
 
-Hey @kanchusaibalajiksb!
+def create_folders(base_path):
+    for folder in FILE_TYPES:
+        folder_path = os.path.join(base_path, folder)
+        os.makedirs(folder_path, exist_ok=True)
 
-Mona here. I'm done preparing your exercise. Hope you enjoy! 💚
+def move_files(base_path):
+    for file in os.listdir(base_path):
+        file_path = os.path.join(base_path, file)
+        if os.path.isfile(file_path):
+            moved = False
+            ext = os.path.splitext(file)[1].lower()
+            for folder, extensions in FILE_TYPES.items():
+                if ext in extensions:
+                    shutil.move(file_path, os.path.join(base_path, folder, file))
+                    moved = True
+                    break
+            if not moved:
+                shutil.move(file_path, os.path.join(base_path, "Others", file))
 
-Remember, it's self-paced so feel free to take a break! ☕️
+def organize_folder(path):
+    create_folders(path)
+    move_files(path)
+    print(f"✅ Done organizing files in: {path}")
 
-[![](https://img.shields.io/badge/Go%20to%20Exercise-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](https://github.com/kanchusaibalajiksb/file-organiser/issues/1)
-
----
-
-&copy; 2025 GitHub &bull; [Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md) &bull; [MIT License](https://gh.io/mit)
-
+if __name__ == "__main__":
+    folder_path = input("Enter folder path to organize: ")
+    if os.path.exists(folder_path):
+        organize_folder(folder_path)
+    else:
+        print("❌ Invalid path. Please check and try again.")
